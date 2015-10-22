@@ -21,14 +21,15 @@ namespace WebExam.Controllers
         public string title { get; set; }
     }
 
-    
+
 
 
     public class WordController : Controller
     {
 
         /// <summary>Создать новый  тест</summary>
-        [Authorize][HttpGet]
+        [Authorize]
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -43,8 +44,8 @@ namespace WebExam.Controllers
             //User.Identity.Name;
 
             WebExamEntities WordEntities = new WebExamEntities();
-            WordPackage wp=new WordPackage();
-            wp.UserName= User.Identity.Name;
+            WordPackage wp = new WordPackage();
+            wp.UserName = User.Identity.Name;
             wp.Title = model.title;
 
             //добавляем новую запись в таблицу WordPackage
@@ -52,14 +53,14 @@ namespace WebExam.Controllers
             WordEntities.SaveChanges();
 
             //получаем id только что добавленного элемента
-            int id=(from p in WordEntities.WordPackage
-                  where p.UserName== wp.UserName && p.Title== wp.Title
-                  orderby p.WordPackageID descending 
-                  select p.WordPackageID).First();
+            int id = (from p in WordEntities.WordPackage
+                      where p.UserName == wp.UserName && p.Title == wp.Title
+                      orderby p.WordPackageID descending
+                      select p.WordPackageID).First();
 
             //Debug.WriteLine(id);
 
-            
+
             foreach (word word in model.word)
             {
                 Word w = new Word();
@@ -72,19 +73,42 @@ namespace WebExam.Controllers
 
 
             return Json("Success");
-            
+
         }
 
         /// <summary>Отобразить список всех тестов</summary>
+        [HttpGet]
         [Authorize]
-        public ActionResult WordPackage(int? id)
+        public ActionResult WordPackage()
         {
             return View();
+        }
+
+        [HttpGet]
+        [Authorize]
+        public JsonResult GetWordPackageList()
+        {
+            WebExamEntities WordEntities = new WebExamEntities();
+
+            //other your code goes here
+            var PackageList = from p in WordEntities.WordPackage
+                              where p.UserName == User.Identity.Name
+                              select new { p.WordPackageID, p.Title};
+            
+            return Json(new { result = PackageList },JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>Пройти определенный тест</summary>
         [Authorize]
         public ActionResult Run(int? id)
+        {
+
+
+
+            return View();
+        }
+
+        public ActionResult Index()
         {
             return View();
         }

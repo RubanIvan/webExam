@@ -51,15 +51,16 @@
                 <h4 class="modal-title">Добавление теста</h4>
             </div>
             <div id="msgText" class="modal-body">
-                <img src="~/Content/Img/ajax-loader.gif"/>
+                <img src="~/Content/Img/ajax-loader.gif" />
                 <p>Ожидайте идет обработка данных</p>
                 <!--</div>-->
                 <div class="modal-footer">
                     <button id="CreateComplite" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
-            </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section scripts
@@ -199,10 +200,10 @@
         });
         //---------------------------------------------------------------------------------
         $("#CreateComplite").on("click", function () {
-            window.location.reload(true);
-            //$(location).attr('href', @Url.Action("Create","Word"));
+            //window.location.reload(true);
+            //$(location).attr('href', Url.Action("Index","Word"));
             //$(location).attr('href', "ya.ru");
-            //window.location.replace(@Url.Action("Index", "Home"));
+            window.location.replace("@Url.Action("Index", "Word")");
         });
     </script>
 }
