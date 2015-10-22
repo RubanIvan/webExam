@@ -6,16 +6,16 @@
     </Key>
     <Property Name="WordID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="WordPackageID" Type="int" />
-    <Property Name="En" Type="nvarchar" MaxLength="1" />
-    <Property Name="Ru" Type="nvarchar" MaxLength="1" />
+    <Property Name="En" Type="nvarchar" MaxLength="2048" />
+    <Property Name="Ru" Type="nvarchar" MaxLength="2048" />
   </EntityType>
   <EntityType Name="WordPackage">
     <Key>
       <PropertyRef Name="WordPackageID" />
     </Key>
     <Property Name="WordPackageID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="UserName" Type="nvarchar" MaxLength="1" />
-    <Property Name="Title" Type="nvarchar" MaxLength="1" />
+    <Property Name="UserName" Type="nvarchar" MaxLength="1024" />
+    <Property Name="Title" Type="nvarchar" MaxLength="1024" />
   </EntityType>
   <Association Name="FK_WordPackage_WordPackageID">
     <End Role="WordPackage" Type="Self.WordPackage" Multiplicity="0..1" />

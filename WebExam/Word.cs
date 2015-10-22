@@ -12,19 +12,13 @@ namespace WebExam
     using System;
     using System.Collections.Generic;
     
-    public partial class WordPackage
+    public partial class Word
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public WordPackage()
-        {
-            this.Word = new HashSet<Word>();
-        }
+        public int WordID { get; set; }
+        public Nullable<int> WordPackageID { get; set; }
+        public string En { get; set; }
+        public string Ru { get; set; }
     
-        public int WordPackageID { get; set; }
-        public string UserName { get; set; }
-        public string Title { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Word> Word { get; set; }
+        public virtual WordPackage WordPackage { get; set; }
     }
 }

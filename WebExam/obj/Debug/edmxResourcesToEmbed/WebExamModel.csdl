@@ -1,13 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="WebExamModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="WebExamEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Word" EntityType="WebExamModel.Word" />
+    <EntitySet Name="WordPackage" EntityType="WebExamModel.WordPackage" />
+    <AssociationSet Name="FK_WordPackage_WordPackageID" Association="WebExamModel.FK_WordPackage_WordPackageID">
+      <End Role="WordPackage" EntitySet="WordPackage" />
+      <End Role="Word" EntitySet="Word" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Word">
+    <Key>
+      <PropertyRef Name="WordID" />
+    </Key>
+    <Property Name="WordID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WordPackageID" Type="Int32" />
+    <Property Name="En" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+    <Property Name="Ru" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="WordPackage" Relationship="WebExamModel.FK_WordPackage_WordPackageID" FromRole="Word" ToRole="WordPackage" />
+  </EntityType>
   <EntityType Name="WordPackage">
     <Key>
       <PropertyRef Name="WordPackageID" />
     </Key>
     <Property Name="WordPackageID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Name" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+    <Property Name="UserName" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+    <Property Name="Title" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Word" Relationship="WebExamModel.FK_WordPackage_WordPackageID" FromRole="WordPackage" ToRole="Word" />
   </EntityType>
-  <EntityContainer Name="WebExamEntities" annotation:LazyLoadingEnabled="true">
-    <EntitySet Name="WordPackage" EntityType="Self.WordPackage" />
-  </EntityContainer>
+  <Association Name="FK_WordPackage_WordPackageID">
+    <End Type="WebExamModel.WordPackage" Role="WordPackage" Multiplicity="0..1" />
+    <End Type="WebExamModel.Word" Role="Word" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WordPackage">
+        <PropertyRef Name="WordPackageID" />
+      </Principal>
+      <Dependent Role="Word">
+        <PropertyRef Name="WordPackageID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

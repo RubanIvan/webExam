@@ -1,0 +1,208 @@
+﻿@{
+    ViewBag.Title = "Create";
+}
+
+<form id="formNewTest" action="#" method="post">
+    <p>Введите название теста</p>
+    <input id="title" type="text" name="Title" value="" />
+    <br />
+    <br />
+
+    <div class="row" style="display: none">
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <p>Английское слово</p>
+            <input id="EngWord" type="text" />
+
+            <ul id="autocomplite_en" style="display: none">
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <li>5</li>
+            </ul>
+
+
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <p>Перевод</p>
+            <input id="RuWord" type="text" />
+
+
+            <button id="addWord">Добавить</button>
+
+        </div>
+
+    </div>
+
+    <div id="dic">
+
+    </div>
+
+    <input id="submit" type="submit" value="Создать тест" style="display: none" />
+
+</form>
+
+
+<div id="succecModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Добавление теста</h4>
+            </div>
+            <div id="msgText" class="modal-body">
+                <img src="~/Content/Img/ajax-loader.gif"/>
+                <p>Ожидайте идет обработка данных</p>
+                <!--</div>-->
+                <div class="modal-footer">
+                    <button id="CreateComplite" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+@section scripts
+{
+    <script>
+        var key = "trnsl.1.1.20151018T104317Z.60cafdb6ff2d10d3.3cc547765c2f1c2647e714fff710243eb5eb1042";
+
+        //флаг готовности формы к отправке
+        var submitFlag = false;
+
+        var dictionary = new Object();
+        dictionary.word = new Array();
+
+        //отключаем отправку формы по {Enter}
+        $("#formNewTest").on("submit", function () {
+            if (submitFlag == false) return false;
+            return true;
+        });
+
+        //Ввод названия теста
+        $("#title").on("change", function () {
+            var title = $("#title");
+            if (title.val().trim().length == 0) return false;
+            //
+            $("#formNewTest>p").hide();
+            title.hide();
+            title.before("<h2>" + title.val() + "</h2>");
+            dictionary.title = title.val();
+            $(".row").show();
+            $("#submit").show();
+
+        });
+
+        $("#EngWord").on("keydown", function (e) {
+            var engWord = $("#EngWord");
+
+            if (e.keyCode == 13 || e.keyCode == 9) {
+                $("#autocomplite_en").hide();
+                return true;
+            }
+
+            $.ajax({
+                type: 'GET',
+                url: "http://suggest.yandex.ru/suggest-sl",
+                data: { part: engWord.val() },
+                dataType: 'jsonp',
+                cache: "false"
+            }).success(function (data) {
+
+                if (data[0].length > 0) {
+                    $("#autocomplite_en").replaceWith(
+                        "<ul id='autocomplite_en' class='list-group'>" +
+                        "<li class='list-group-item'>" + data[1][0] + "</li>" +
+                        "<li class='list-group-item'>" + data[1][1] + "</li>" +
+                        "<li class='list-group-item'>" + data[1][2] + "</li>" +
+                        "<li class='list-group-item'>" + data[1][3] + "</li>" +
+                        "<li class='list-group-item'>" + data[1][4] + "</li>" +
+                        "</ul>");
+
+                    $("#autocomplite_en li").on("click", function () {
+                        $("#EngWord").val($(this).text());
+                        $("#autocomplite_en").hide();
+                    });
+
+
+                }
+            });
+
+        });
+        //------------------------------------------------------------------------
+        $("#RuWord").on("focus", function () {
+            if ($("#EngWord").val().toString().length == 0) {
+                return
+            }
+            if ($("#RuWord").val().length > 0) {
+                return
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "https://translate.yandex.net/api/v1.5/tr.json/translate",
+                data: {
+                    key: key,
+                    text: $("#EngWord").val(),
+                    lang: "en-ru",
+                    format: "plain"
+                },
+                dataType: 'jsonp',
+                cache: "false"
+            }).success(function (data) {
+                if ($("#RuWord").val().length == 0 && data.text.length > 0) {
+                    $("#RuWord").val(data.text[0])
+                }
+            });
+        });
+        //------------------------------------------------------------------------------
+        $("#addWord").on("click", function () {
+            var en = $("#EngWord");
+            var ru = $("#RuWord");
+
+            if (en.val() == "" || ru.val() == "") return;
+
+            //dictionary.word[en.val()]=ru.val();
+            dictionary.word.push({ "en": en.val(), "ru": ru.val() })
+
+            $("#dic").append("<p>" + en.val() + "--" + ru.val() + "</p>");
+            en.val("");
+            ru.val("");
+        });
+        //------------------------------------------------------------------------------
+        $("#submit").on("click", function () {
+            if (dictionary.title != "" && dictionary.word.length > 0) {
+                //submitFlag=true;
+
+                $('#succecModal').modal('show');
+                $("#msgText>img").show();
+                $("#msgText>p").text("Ожидайте идет обработка данных");
+
+                $.ajax({
+                    url: "@Url.Action("Create","Word")",
+                    type: "POST",
+                    data: JSON.stringify(dictionary),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    success: function (response) {
+                        //$('#succecModal').modal('show');
+                        $("#msgText>img").hide();
+                        $("#msgText>p").text("Данные успешно добавленны");
+
+                    }
+                });
+
+            }
+        });
+        //---------------------------------------------------------------------------------
+        $("#CreateComplite").on("click", function () {
+            window.location.reload(true);
+            //$(location).attr('href', @Url.Action("Create","Word"));
+            //$(location).attr('href', "ya.ru");
+            //window.location.replace(@Url.Action("Index", "Home"));
+        });
+    </script>
+}

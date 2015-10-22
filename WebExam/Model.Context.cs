@@ -25,6 +25,7 @@ namespace WebExam
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Word> Word { get; set; }
         public virtual DbSet<WordPackage> WordPackage { get; set; }
     }
 }

@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Хранилище WebExamModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Word">
+          <Key>
+            <PropertyRef Name="WordID" />
+          </Key>
+          <Property Name="WordID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WordPackageID" Type="int" />
+          <Property Name="En" Type="nvarchar" MaxLength="2048" />
+          <Property Name="Ru" Type="nvarchar" MaxLength="2048" />
+        </EntityType>
+        <EntityType Name="WordPackage">
+          <Key>
+            <PropertyRef Name="WordPackageID" />
+          </Key>
+          <Property Name="WordPackageID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="1024" />
+          <Property Name="Title" Type="nvarchar" MaxLength="1024" />
+        </EntityType>
+        <Association Name="FK_WordPackage_WordPackageID">
+          <End Role="WordPackage" Type="Self.WordPackage" Multiplicity="0..1" />
+          <End Role="Word" Type="Self.Word" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WordPackage">
+              <PropertyRef Name="WordPackageID" />
+            </Principal>
+            <Dependent Role="Word">
+              <PropertyRef Name="WordPackageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Хранилище WebExamModelContainer">
+          <EntitySet Name="Word" EntityType="Self.Word" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="WordPackage" EntityType="Self.WordPackage" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_WordPackage_WordPackageID" Association="Self.FK_WordPackage_WordPackageID">
+            <End Role="WordPackage" EntitySet="WordPackage" />
+            <End Role="Word" EntitySet="Word" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="WebExamModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Word">
+          <Key>
+            <PropertyRef Name="WordID" />
+          </Key>
+          <Property Name="WordID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WordPackageID" Type="Int32" />
+          <Property Name="En" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
+          <Property Name="Ru" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="WordPackage" Relationship="Self.FK_WordPackage_WordPackageID" FromRole="Word" ToRole="WordPackage" />
+        </EntityType>
+        <EntityType Name="WordPackage">
+          <Key>
+            <PropertyRef Name="WordPackageID" />
+          </Key>
+          <Property Name="WordPackageID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Title" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Word" Relationship="Self.FK_WordPackage_WordPackageID" FromRole="WordPackage" ToRole="Word" />
+        </EntityType>
+        <Association Name="FK_WordPackage_WordPackageID">
+          <End Role="WordPackage" Type="Self.WordPackage" Multiplicity="0..1" />
+          <End Role="Word" Type="Self.Word" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WordPackage">
+              <PropertyRef Name="WordPackageID" />
+            </Principal>
+            <Dependent Role="Word">
+              <PropertyRef Name="WordPackageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="WebExamEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Word" EntityType="Self.Word" />
+          <EntitySet Name="WordPackage" EntityType="Self.WordPackage" />
+          <AssociationSet Name="FK_WordPackage_WordPackageID" Association="Self.FK_WordPackage_WordPackageID">
+            <End Role="WordPackage" EntitySet="WordPackage" />
+            <End Role="Word" EntitySet="Word" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Хранилище WebExamModelContainer" CdmEntityContainer="WebExamEntities">
+          <EntitySetMapping Name="Word">
+            <EntityTypeMapping TypeName="WebExamModel.Word">
+              <MappingFragment StoreEntitySet="Word">
+                <ScalarProperty Name="WordID" ColumnName="WordID" />
+                <ScalarProperty Name="WordPackageID" ColumnName="WordPackageID" />
+                <ScalarProperty Name="En" ColumnName="En" />
+                <ScalarProperty Name="Ru" ColumnName="Ru" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WordPackage">
+            <EntityTypeMapping TypeName="WebExamModel.WordPackage">
+              <MappingFragment StoreEntitySet="WordPackage">
+                <ScalarProperty Name="WordPackageID" ColumnName="WordPackageID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Нет" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
