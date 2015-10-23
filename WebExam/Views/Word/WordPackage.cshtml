@@ -102,7 +102,7 @@
            //var re = new RegExp("[а-яА-Яa-zA-Z]" + filtr.val() + "[а-яА-Яa-zA-Z]", "gi");
             $.each(data, function (i, item) {
                 if (re.test(item.Title)) {
-                    TestList.append('<a href="Word/Run?id=' +
+                    TestList.append('<a href="Run?id=' +
                         +item.WordPackageID+'">'+item.Title+'</a><br/>');
                 }
             });
@@ -113,6 +113,9 @@
             //            +item.WordPackageID+'">'+item.Title+'</a><br/>');
             //    }
             //});
+
+            
+
 
         }
 

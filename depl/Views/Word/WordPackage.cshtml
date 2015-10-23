@@ -1,0 +1,124 @@
+﻿@{
+    ViewBag.Title = "WordPackage";
+}
+
+<div id="loading" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Загрузка тестов</h4>
+            </div>
+            <div id="msgText" class="modal-body">
+                <img src="~/Content/Img/ajax-loader.gif" />
+                <p>Ожидайте идет получение данных</p>
+                <!--</div>-->
+                <div class="modal-footer">
+                    <button id="CreateComplite" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="inner" style="display: none">
+    
+    <br />
+</div>
+
+
+
+@section scripts
+{
+    <script>
+
+        //полученный список с сервера
+        var data;
+
+        var filtr;
+
+        var TestList;
+
+        $('#loading').modal('show');
+
+        //отрабатывает когда получен список от сервера
+        function LoadingComplite() {
+
+            $('#loading').modal('hide');
+
+            $("#inner").show();
+
+            if (data.length == 0) {
+                $("#inner").append("<h2>У Вас нет ни одного теста</h2>" +
+                    "<br/>" +
+                    '@Html.ActionLink("Создать тест", "Create", "Word")'
+                );
+                return;
+            }
+
+            $("#inner").append('<input id="filtr" type="text" placeholder="Фильтр"/>' +
+                '<br/><br />');
+
+            filtr = $("#filtr");
+
+            $("#filtr").on("keyup", function () { CreateList(); });
+
+
+        $("#inner").append('<div id="TestList"></div>');
+
+        TestList = $("#TestList");
+
+
+        CreateList();
+
+
+    }
+
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetWordPackageList", "Word")',
+            dataType: 'json',
+            content: "application/json",
+            cache: false,
+            error: function(response) {
+                alert(response.responseText);
+            },
+            success: function(result) {
+                data = result.result;
+                LoadingComplite();
+            }
+        });
+
+
+        function CreateList() {
+
+            $("#TestList a").remove();
+            $("#TestList br").remove();
+
+            TestList = $("#TestList");
+
+            //var re = new RegExp("\\w+" + filtr.val() + "\\w+", "gi");
+            var re = new RegExp(filtr.val(), "gi");
+            //var re = new RegExp("\\.", "gi");
+           //var re = new RegExp("[а-яА-Яa-zA-Z]" + filtr.val() + "[а-яА-Яa-zA-Z]", "gi");
+            $.each(data, function (i, item) {
+                if (re.test(item.Title)) {
+                    TestList.append('<a href="Run?id=' +
+                        +item.WordPackageID+'">'+item.Title+'</a><br/>');
+                }
+            });
+
+            //$.each(data, function (i, item) {
+            //    if ((item.Title.toLowerCase().indexOf(filtr.val().toLowerCase())) || filtr.val().length == 0) {
+            //        TestList.append('<a href="Word/Run?id=' +
+            //            +item.WordPackageID+'">'+item.Title+'</a><br/>');
+            //    }
+            //});
+
+            
+
+
+        }
+
+    </script>
+
+}

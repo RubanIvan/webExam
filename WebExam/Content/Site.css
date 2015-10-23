@@ -22,3 +22,9 @@ footer #navbarCollapse li a {
 footer #navbarCollapse li a:hover {
   background-color: #c0bbc0;
 }
+.correct {
+  color: green;
+}
+.wrong {
+  text-decoration: line-through;
+}

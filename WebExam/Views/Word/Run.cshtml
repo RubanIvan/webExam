@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewBag.Title = "Run";
+}
+
+<div id="loading" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Загрузка теста</h4>
+            </div>
+            <div id="msgText" class="modal-body">
+                <img src="~/Content/Img/ajax-loader.gif"/>
+                <p>Ожидайте идет получение данных</p>
+                <!--</div>-->
+                <div class="modal-footer">
+                    <button id="LoadComplite" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div id="inner">
+
+    </div>
+
+    <a id="exit" class="btn btn-default" onclick="exit()" style="display: none" href="@Url.Action("Index","Word")">Завершить</a>
+
+    @section scripts
+{
+        <script>
+            var data;
+            var index = 0;
+
+            $('#loading').modal('show');
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetRunList", "Word",new {id= ViewBag.id},null)',
+                dataType: 'json',
+                content: "application/json",
+                cache: false,
+                error: function (response) {
+                    alert(response.responseText);
+                },
+                success: function (result) {
+                    data = result.result;
+                    LoadingComplite();
+                }
+            });
+
+            function LoadingComplite() {
+
+                if (data.length == 0) {
+                    $("#loading > div > div > div.modal-header > h4").text("Ошибка");
+                    $("#msgText>p").text("Ошибка получения данных");
+                    $("#LoadComplite").on("click", function () {
+                        window.location.replace("@Url.Action("Index", "Word")");
+                        return;
+                    });
+
+                }
+                $('#loading').modal('hide');
+
+                ShowWord();
+
+            }
+
+
+            function ShowWord() {
+                $("#inner").append(
+                    "<div class='row'>" +
+                    "<div class='col-lg-6 col-md-6 col-sm-6'>" +
+                    "<h3 class='enWord'></h3>" +
+                    "</div>" +
+                    "<div class='col-lg-6 col-md-6 col-sm-6'>" +
+                    "<div class='radio'>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>"
+                );
+
+                $(".enWord:last").text(data[index].en);
+
+                $(".enWord:last").append("<br/>"+
+                        "<audio src='https://tts.voicetech.yandex.net/generate?text="+data[index].en+"&format=mp3&lang=ru-RU&speaker=zahar&key=fcbc7c3b-1ba7-4732-b83c-8f1d4c6bc974' controls></audio>"
+                        )
+
+                $.each(data[index].ru, function (i, item) {
+                    $(".radio:last").append(
+                        "<input type='radio' class='rb' name='answer' answerId='" + i + "'  />" + "<span>" + item + "</span><br/>"
+                    );
+                });
+
+                //обработчик нажатия
+                $(".rb").on("click", function () {
+
+                    var variant = $(this).attr("answerId");
+
+                    $(".radio:last *").remove();
+
+                    if (variant == data[index].answer) {
+                        $(".radio:last").append(
+                            "<h4 class='correct'>" + data[index].ru[data[index].answer] + "</h4>"
+                            );
+                    } else {
+                        $(".radio:last").append(
+                            "<p class='wrong'>" + data[index].ru[variant] + "</p>" +
+                           "<h4 class='correct'>" + data[index].ru[data[index].answer] + "</h4>");
+                        //wrong
+                    }
+
+                    index++;
+
+                    //проверяем это было последнее слово в тесте
+                    if (index < data.length) {
+                        ShowWord();
+                    } else {
+                        //показываем кнопку выход
+
+                        $("#exit").show();
+
+                    }
+
+
+                });
+
+            }
+
+
+
+        </script>
+    }
+

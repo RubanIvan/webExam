@@ -1,0 +1,30 @@
+﻿body {
+  background-color: #f1f0f1;
+  margin: 0;
+  padding: 0;
+  font: 12px verdana, arial, helvetica;
+  color: #777c7e;
+  width: 100%;
+}
+#mainwrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+footer span {
+  margin-left: 20px;
+}
+footer .logo {
+  float: left;
+}
+footer #navbarCollapse li a {
+  color: #5390a5;
+}
+footer #navbarCollapse li a:hover {
+  background-color: #c0bbc0;
+}
+.correct {
+  color: green;
+}
+.wrong {
+  text-decoration: line-through;
+}
